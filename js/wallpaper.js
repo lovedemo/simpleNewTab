@@ -22,7 +22,8 @@ let settings = {
   source: 'picsum',      // picsum | bing | none
   interval: 86400000,    // 24小时
   currentWallpaper: null,
-  lastRefresh: null
+  lastRefresh: null,
+  lastBingDate: null     // 记录 Bing 壁纸上次刷新的日期（格式：YYYY-MM-DD）
 };
 
 // 标记是否是首次加载（用于判断是否应该使用同步的壁纸）
@@ -154,6 +155,38 @@ function updateUI () {
 
   // 更新下拉框
   intervalSelect.value = settings.interval;
+
+  // 根据壁纸源更新刷新按钮的显示状态和文本
+  updateRefreshButton();
+}
+
+/**
+ * 更新刷新按钮和刷新频率选项的显示状态
+ */
+function updateRefreshButton () {
+  const btnTextEl = refreshBtn.querySelector('.refresh-btn-text');
+  // 获取刷新频率选项的父容器（option-group）
+  const intervalGroup = intervalSelect.closest('.option-group');
+
+  switch (settings.source) {
+    case 'picsum':
+      // Picsum 显示"换一张"按钮和刷新频率选项
+      refreshBtn.style.display = 'flex';
+      if (btnTextEl) btnTextEl.textContent = '换一张';
+      if (intervalGroup) intervalGroup.style.display = 'flex';
+      break;
+    case 'bing':
+      // Bing 显示"刷新"按钮，隐藏刷新频率选项（每天0点自动刷新）
+      refreshBtn.style.display = 'flex';
+      if (btnTextEl) btnTextEl.textContent = '刷新';
+      if (intervalGroup) intervalGroup.style.display = 'none';
+      break;
+    case 'none':
+      // 纯色模式隐藏按钮和刷新频率选项
+      refreshBtn.style.display = 'none';
+      if (intervalGroup) intervalGroup.style.display = 'none';
+      break;
+  }
 }
 
 /**
@@ -170,26 +203,60 @@ function setLoading (loading) {
 }
 
 /**
+ * 获取当前日期字符串（YYYY-MM-DD）
+ */
+function getTodayDateString () {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+/**
+ * 检查 Bing 壁纸是否需要刷新（是否过了0点）
+ */
+function shouldRefreshBing () {
+  const today = getTodayDateString();
+  // 如果没有记录上次日期，或者日期不是今天，则需要刷新
+  return !settings.lastBingDate || settings.lastBingDate !== today;
+}
+
+/**
  * 加载壁纸
  */
 async function loadWallpaper (forceRefresh = false) {
   const now = Date.now();
 
   // 首次加载时，如果已有同步的壁纸，直接使用（不受时间判断影响）
-  // 这样可以确保从其他设备同步过来的壁纸能正确显示
+  // 但对于 Bing，需要检查是否过了0点
   if (isFirstLoad && settings.currentWallpaper && !forceRefresh) {
-    console.log('[Wallpaper] 首次加载，使用同步的壁纸');
-    isFirstLoad = false;
-    applyWallpaper(settings.currentWallpaper);
-    return;
+    // Bing 壁纸需要检查是否是新的一天
+    if (settings.source === 'bing' && shouldRefreshBing()) {
+      console.log('[Wallpaper] Bing 壁纸需要刷新（新的一天）');
+      isFirstLoad = false;
+      // 继续执行刷新逻辑
+    } else {
+      console.log('[Wallpaper] 首次加载，使用同步的壁纸');
+      isFirstLoad = false;
+      applyWallpaper(settings.currentWallpaper);
+      return;
+    }
   }
   isFirstLoad = false;
 
-  const shouldRefresh = forceRefresh ||
-    !settings.currentWallpaper ||
-    (settings.interval > 0 &&
-      settings.lastRefresh &&
-      now - settings.lastRefresh >= settings.interval);
+  // 判断是否需要刷新
+  let shouldRefresh = forceRefresh || !settings.currentWallpaper;
+
+  if (!shouldRefresh) {
+    // 根据壁纸源使用不同的刷新判断逻辑
+    if (settings.source === 'bing') {
+      // Bing: 检查是否过了0点（新的一天）
+      shouldRefresh = shouldRefreshBing();
+    } else if (settings.source === 'picsum') {
+      // Picsum: 使用时间间隔判断
+      shouldRefresh = settings.interval > 0 &&
+        settings.lastRefresh &&
+        now - settings.lastRefresh >= settings.interval;
+    }
+  }
 
   if (!shouldRefresh && settings.currentWallpaper) {
     applyWallpaper(settings.currentWallpaper);
@@ -218,6 +285,10 @@ async function loadWallpaper (forceRefresh = false) {
     if (wallpaper) {
       settings.currentWallpaper = wallpaper;
       settings.lastRefresh = now;
+      // 如果是 Bing，记录当前日期
+      if (settings.source === 'bing') {
+        settings.lastBingDate = getTodayDateString();
+      }
       saveSettings();
       applyWallpaper(wallpaper);
     } else {
@@ -274,12 +345,12 @@ async function fetchPicsum () {
 /**
  * 从 Bing 获取每日壁纸
  * idx 参数: 0=今天, 1=昨天, ..., 7=7天前（最多8张历史图片）
+ * 固定使用 idx=0 获取当天的图片
  */
 async function fetchBing () {
   try {
-    // 随机选择最近 8 天的图片（idx: 0-7）
-    const idx = Math.floor(Math.random() * 8);
-    const apiUrl = `${BING_API_BASE}&idx=${idx}`;
+    // 固定获取当天的图片（idx=0）
+    const apiUrl = `${BING_API_BASE}&idx=0`;
 
     console.log('[Wallpaper] Bing API URL:', apiUrl);
 

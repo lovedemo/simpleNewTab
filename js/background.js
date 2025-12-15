@@ -87,6 +87,15 @@ async function refreshWallpaper () {
     return;
   }
 
+  // 对于 Bing，检查是否已经是今天的壁纸
+  if (wallpaperSettings.source === 'bing') {
+    const today = getTodayDateString();
+    if (wallpaperSettings.lastBingDate === today) {
+      console.log('[Background] Bing 壁纸今天已刷新，跳过');
+      return;
+    }
+  }
+
   let wallpaper = null;
 
   try {
@@ -102,6 +111,10 @@ async function refreshWallpaper () {
     if (wallpaper) {
       wallpaperSettings.currentWallpaper = wallpaper;
       wallpaperSettings.lastRefresh = Date.now();
+      // 如果是 Bing，记录当前日期
+      if (wallpaperSettings.source === 'bing') {
+        wallpaperSettings.lastBingDate = getTodayDateString();
+      }
       await chrome.storage.sync.set({ wallpaperSettings });
       console.log('[Background] 壁纸已更新:', wallpaper.url);
     }
@@ -135,12 +148,21 @@ async function fetchPicsum () {
 }
 
 /**
+ * 获取当前日期字符串（YYYY-MM-DD）
+ */
+function getTodayDateString () {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+/**
  * 从 Bing 获取每日壁纸
+ * 固定使用 idx=0 获取当天的图片
  */
 async function fetchBing () {
   try {
-    const idx = Math.floor(Math.random() * 8);
-    const apiUrl = `${BING_API_BASE}&idx=${idx}`;
+    // 固定获取当天的图片（idx=0）
+    const apiUrl = `${BING_API_BASE}&idx=0`;
 
     const response = await fetch(apiUrl);
     const data = await response.json();
