@@ -26,6 +26,7 @@ async function init () {
     if (e.key === 'Escape') {
       Shortcuts.closeModal();
       Shortcuts.hideContextMenu();
+      Shortcuts.closeFolderModal();
       Wallpaper.closeModal();
       Settings.closeModal();
     }
