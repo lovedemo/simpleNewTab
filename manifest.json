@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Simple New Tab",
+  "version": "2.3.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvCVBbTnoOy5CvYU4qusHnT1w8gnfbRL8tAwChf11EcFWlurkYcUtfmr9Fy+LsmZdIxx2iUXLdlAg6/1JMU17krfFbzYyddpQqLsU2Pd+100ZxxvysdoKffjGGZZj1aETAsL6e+bGmBsmE32sjoSJ3ik3epbjVTIYYTSG6URzHs48Q8iIyHLSh+R8NN9PtSW2nLA3V+0ylOps7Mu1fohCtsHga4auvQlwTmp8Cr0wXE3WwTNTvtUP7Ok1CXJTo/YrH/xXjpyZqpopRwHWAriRQT37DpNElrutrVBBrUnH8S9JecBX11w9TgvL4vH/9robWj3cLxM3Qd3XsvWN4SOwGwIDAQAB",
+  "description": "简洁美观的新标签页，支持 Picsum/Bing 壁纸",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": [
+    "storage",
+    "alarms",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://picsum.photos/*",
+    "https://fastly.picsum.photos/*",
+    "https://www.bing.com/*",
+    "https://t2.gstatic.com/*"
+  ],
+  "background": {
+    "service_worker": "js/background.js",
+    "type": "module"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
+

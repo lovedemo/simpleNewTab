@@ -1,0 +1,1198 @@
+/**
+ * Simple New Tab - 样式文件
+ */
+
+/* ==================== Variables ==================== */
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-tertiary: #1a1a25;
+  --text-primary: #f0f0f5;
+  --text-secondary: #8888a0;
+  --text-muted: #55556a;
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --accent-glow: rgba(99, 102, 241, 0.3);
+  --glass-bg: rgba(20, 20, 30, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 40px var(--accent-glow);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==================== Reset ==================== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ==================== Base ==================== */
+html,
+body {
+  height: 100%;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+/* ==================== Background Layers ==================== */
+.wallpaper-layer {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  pointer-events: none;
+}
+
+.wallpaper-layer.loaded {
+  opacity: 1;
+}
+
+.wallpaper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.wallpaper-layer.loaded + .wallpaper-overlay {
+  opacity: 1;
+}
+
+.background-layer {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+      ellipse 80% 50% at 50% -20%,
+      rgba(99, 102, 241, 0.15),
+      transparent
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 80% 100%,
+      rgba(139, 92, 246, 0.1),
+      transparent
+    ),
+    radial-gradient(
+      ellipse 40% 30% at 10% 80%,
+      rgba(59, 130, 246, 0.08),
+      transparent
+    ),
+    linear-gradient(180deg, var(--bg-primary) 0%, #0d0d14 100%);
+  z-index: 2;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.wallpaper-layer.loaded ~ .background-layer {
+  opacity: 0.3;
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ==================== Container ==================== */
+.container {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 40px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== Time Section ==================== */
+.time-section {
+  text-align: center;
+  animation: slideDown 0.8s var(--transition-slow);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.time {
+  font-size: clamp(80px, 15vw, 160px);
+  font-weight: 300;
+  letter-spacing: -4px;
+  line-height: 1;
+  background: linear-gradient(
+    135deg,
+    var(--text-primary) 0%,
+    var(--text-secondary) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 80px var(--accent-glow);
+}
+
+.date {
+  font-size: clamp(16px, 2.5vw, 22px);
+  color: var(--text-secondary);
+  margin-top: 8px;
+  font-weight: 400;
+  letter-spacing: 2px;
+}
+
+.greeting {
+  font-size: clamp(14px, 2vw, 18px);
+  color: var(--text-muted);
+  margin-top: 16px;
+  font-weight: 300;
+}
+
+/* ==================== Search Section ==================== */
+.search-section {
+  width: 100%;
+  max-width: 640px;
+  animation: slideUp 0.8s var(--transition-slow) 0.1s both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  padding: 4px 8px 4px 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-soft);
+  transition: all var(--transition-normal);
+}
+
+.search-container:focus-within {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: var(--shadow-soft), var(--shadow-glow);
+  transform: scale(1.02);
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: color var(--transition-fast);
+}
+
+.search-container:focus-within .search-icon {
+  color: var(--accent-primary);
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 16px 12px;
+  font-size: 16px;
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-engines {
+  display: flex;
+  gap: 4px;
+  padding-right: 8px;
+}
+
+.engine-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.engine-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.engine-btn.active {
+  background: var(--accent-primary);
+  color: white;
+}
+
+/* ==================== Shortcuts Section ==================== */
+.shortcuts-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: slideUp 0.8s var(--transition-slow) 0.2s both;
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 20px;
+}
+
+.shortcuts-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.shortcuts-viewport {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  min-width: 0;
+}
+
+.shortcuts-pages {
+  display: flex;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.shortcuts-page {
+  flex-shrink: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--items-per-row, 6), 88px);
+  gap: 12px;
+  justify-content: center;
+  align-content: start;
+  padding: 8px 0;
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 100px));
+  gap: 16px;
+  max-width: 800px;
+  justify-content: center;
+}
+
+/* 分页导航按钮 */
+.page-nav-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.page-nav-btn.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.page-nav-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.page-nav-btn:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+.page-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* 分页指示器 */
+.page-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+}
+
+.page-dots.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.page-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--glass-border);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  padding: 0;
+}
+
+.page-dot:hover {
+  background: var(--text-muted);
+}
+
+.page-dot.active {
+  background: var(--accent-primary);
+  width: 24px;
+}
+
+.shortcut-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 88px;
+  padding: 16px 12px;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.shortcut-item:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--glass-border);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-soft);
+}
+
+.shortcut-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  overflow: hidden;
+}
+
+.shortcut-icon img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.shortcut-name {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 添加快捷方式按钮 - 使用和 shortcut-item 相同的基础样式 */
+.shortcut-item.add-shortcut-btn {
+  border: 1px dashed var(--glass-border);
+  background: transparent;
+}
+
+.shortcut-item.add-shortcut-btn:hover {
+  border-color: var(--accent-primary);
+  border-style: solid;
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.shortcut-icon.add-icon {
+  background: transparent;
+  border: 2px dashed var(--glass-border);
+  color: var(--text-muted);
+}
+
+.shortcut-icon.add-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.shortcut-item.add-shortcut-btn:hover .shortcut-icon.add-icon {
+  border-color: var(--accent-primary);
+  border-style: solid;
+  color: var(--accent-primary);
+}
+
+/* ==================== 拖拽排序样式 ==================== */
+.shortcut-item[draggable='true'] {
+  cursor: grab;
+}
+
+.shortcut-item[draggable='true']:active {
+  cursor: grabbing;
+}
+
+.shortcut-item.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+  cursor: grabbing;
+}
+
+.shortcut-item.drag-over {
+  position: relative;
+}
+
+.shortcut-item.drag-over-left::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: var(--accent-primary);
+  border-radius: 2px;
+  animation: dragIndicatorPulse 0.8s ease-in-out infinite;
+}
+
+.shortcut-item.drag-over-right::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: var(--accent-primary);
+  border-radius: 2px;
+  animation: dragIndicatorPulse 0.8s ease-in-out infinite;
+}
+
+@keyframes dragIndicatorPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scaleY(0.9);
+  }
+}
+
+/* 拖拽时分页按钮的样式 */
+.page-nav-btn.drag-active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--accent-primary);
+}
+
+.page-nav-btn.drag-highlight {
+  background: var(--accent-primary) !important;
+  color: white !important;
+  transform: scale(1.1);
+  animation: dragHighlightPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes dragHighlightPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
+  }
+}
+
+/* ==================== Settings Button Group ==================== */
+.settings-btn-group {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 50;
+}
+
+.settings-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+}
+
+.settings-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.settings-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+/* ==================== Wallpaper Info ==================== */
+.wallpaper-info {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  max-width: 300px;
+  padding: 10px 16px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+  z-index: 50;
+}
+
+.wallpaper-info.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.wallpaper-info a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+.wallpaper-info a:hover {
+  text-decoration: underline;
+}
+
+/* ==================== Modal ==================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+  z-index: 100;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: var(--shadow-soft);
+  transform: scale(0.9) translateY(20px);
+  transition: transform var(--transition-slow);
+}
+
+.modal-overlay.active .modal {
+  transform: scale(1) translateY(0);
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text-primary);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.form-group input {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: inherit;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.form-group input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-group input::placeholder {
+  color: var(--text-muted);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-actions.clear-actions {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modal-actions.clear-actions .btn {
+  flex: 1;
+  min-width: 100px;
+}
+
+/* ==================== Buttons ==================== */
+.btn {
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-cancel:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.btn-confirm {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.btn-confirm:hover {
+  background: var(--accent-secondary);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary.loading svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==================== Context Menu ==================== */
+.context-menu {
+  position: fixed;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  min-width: 140px;
+  box-shadow: var(--shadow-soft);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95);
+  transition: all var(--transition-fast);
+  z-index: 200;
+}
+
+.context-menu.active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.context-menu-item svg {
+  width: 16px;
+  height: 16px;
+}
+
+.context-menu-item:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.context-menu-item#deleteShortcut:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* ==================== Wallpaper Modal ==================== */
+.wallpaper-modal {
+  max-width: 440px;
+}
+
+.wallpaper-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.source-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.source-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.source-tab svg {
+  width: 20px;
+  height: 20px;
+}
+
+.source-tab:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.source-tab.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+.select-input {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238888a0' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
+}
+
+.select-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.wallpaper-preview {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wallpaper-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wallpaper-preview .no-wallpaper {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ==================== App Settings Modal ==================== */
+.settings-modal {
+  max-width: 440px;
+}
+
+.settings-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ==================== Settings Tabs ==================== */
+.settings-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 12px;
+}
+
+.settings-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.settings-tab svg {
+  width: 16px;
+  height: 16px;
+}
+
+.settings-tab:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.settings-tab.active {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.settings-panel {
+  display: none;
+}
+
+.settings-panel.active {
+  display: block;
+}
+
+/* ==================== Import Section ==================== */
+.import-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.import-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.import-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.import-status {
+  font-size: 12px;
+  text-align: center;
+  min-height: 18px;
+}
+
+.import-status.success {
+  color: #22c55e;
+}
+
+.import-status.error {
+  color: #ef4444;
+}
+
+.import-status.loading {
+  color: var(--accent-primary);
+}
+
+.shortcut-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ==================== Danger Zone ==================== */
+.danger-zone {
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.danger-hint {
+  color: rgba(239, 68, 68, 0.7) !important;
+}
+
+.btn-danger {
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+/* ==================== Confirm Modal ==================== */
+.confirm-modal {
+  max-width: 360px;
+}
+
+.confirm-message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 640px) {
+  .container {
+    padding: 30px 16px;
+    gap: 30px;
+  }
+
+  .shortcuts-section {
+    padding: 0 10px;
+  }
+
+  .shortcuts-page {
+    grid-template-columns: repeat(var(--items-per-row, 4), 70px);
+    gap: 10px;
+  }
+
+  .shortcuts-container {
+    gap: 8px;
+  }
+
+  .shortcut-item {
+    width: 70px;
+    padding: 12px 8px;
+  }
+
+  .shortcut-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .shortcut-icon img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .settings-btn-group {
+    bottom: 16px;
+    right: 16px;
+    gap: 8px;
+  }
+
+  .settings-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .page-nav-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .page-nav-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .wallpaper-info {
+    bottom: 16px;
+    left: 16px;
+    right: 70px;
+    max-width: none;
+  }
+}
+
+/* ==================== Utilities ==================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+::selection {
+  background: var(--accent-primary);
+  color: white;
+}
